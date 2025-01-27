@@ -30,6 +30,7 @@
     "@angular/cli": "^18.2.12",
     "@angular/compiler-cli": "^18.2.0",
     "@types/jasmine": "~5.1.0",
+    "autoprefixer": "^10.4.20",
     "concurrently": "^9.1.2",
     "electron": "^34.0.1",
     "electronmon": "^2.0.3",
@@ -39,6 +40,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
     "typescript": "~5.5.2"
   }
 }
