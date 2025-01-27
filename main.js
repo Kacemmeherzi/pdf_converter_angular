@@ -10,10 +10,14 @@ function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
+      
+      
     },
   });
 
   // Load the Angular app from the dist folder (after build)
+  // //? hethi for prod
+  /* 
   win.loadURL(
     url.format({
       pathname: path.join(__dirname, 'dist/electron-angular-app/index.html'),
@@ -21,6 +25,10 @@ function createWindow() {
       slashes: true,
     })
   );
+  */
+ // * for dev
+ win.loadURL('http://localhost:4200')
+
 
   // Open dev tools
   win.webContents.openDevTools();
