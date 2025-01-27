@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
   
 })
-export class ElectronservicesService {
+export class ElectronService {
   private electronAPI : any ;
   constructor() {
     if ((window as any).electronAPI) {
