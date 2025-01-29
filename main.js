@@ -1,6 +1,5 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron"); 
 const path = require("path");
-const url = require("url");
 
 let win;
 
@@ -9,11 +8,12 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
-      preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: false,
+      preload: path.join(__dirname,"preload.js"),
       contextIsolation: true,
     },
   });
+  console.log("Preload Path:", path.join(__dirname, "preload.js"));
 
   // Load the Angular app from the dist folder (after build)
   // //? hethi for prod
@@ -36,6 +36,20 @@ function createWindow() {
     win = null;
   });
 }
+ipcMain.handle("open-file-dialog", async () => {
+  const result = await dialog.showOpenDialog({
+    title: "Select a PDF File",
+    filters: [{ name: "PDF Files", extensions: ["pdf"] }],
+    properties: ["openFile"],
+  });
+
+  if (!result.canceled && result.filePaths.length > 0) {
+    return result.filePaths[0]; // Return selected file path
+  }
+
+  return ""; // Return empty if no file selected
+});
+
 
 app.on("ready", createWindow);
 
