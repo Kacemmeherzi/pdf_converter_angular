@@ -1,14 +1,24 @@
 import { Injectable } from '@angular/core';
 
+declare global {
+  interface Window {
+    electronAPI: {
+      selectFile: () => Promise<string>;
+      sendFileToBackend: (filePath: string) => void;
+    };
+  }
+}
+
 @Injectable({
   providedIn: 'root',
-  
 })
 export class ElectronService {
-  private electronAPI : any ;
-  constructor() {
-    if ((window as any).electronAPI) {
-      this.electronAPI = (window as any).electronAPI;
-    }
+  constructor() {}
+
+  // Open the file dialog and return the selected file path
+  selectFile(): Promise<string> {
+    return window.electronAPI.selectFile();
   }
+
+ 
 }
