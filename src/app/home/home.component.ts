@@ -1,28 +1,42 @@
 import { Component, OnInit } from '@angular/core';
 import { ElectronService } from '../services/electronservices.service';
+import { FileInfos } from '../models/FileInfos';
+import { CommonModule, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [DatePipe, CommonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit {
-  selectedFile: File | null = null;
-
+export class HomeComponent {
+  fileInfos: FileInfos = new FileInfos();
+  isFileSelected: boolean = false;
+  buttonDefaultText: string = 'Upload';
+  //buttonBaxkgroundColor: string = 'blue';
   constructor(private electronService: ElectronService) {}
 
-  ngOnInit(): void {
-    if (!window.electronAPI) {
-      console.error('Electron API is not available.');
+  async onFileSelected(): Promise<void> {
+    await this.electronService.selectFile().then((filePath: string) => {
+      this.fileInfos.Path = filePath;
+      // console.log(this.filePath.Path);
+    });
+
+    if (this.fileInfos.Path) {
+      this.fileInfos = await this.electronService.gatherFIleInfo(
+        this.fileInfos.Path
+      );
+      this.isFileSelected = true;
+      console.log(this.fileInfos);
+      this.buttonDefaultText = 'Delete'
+      
     }
   }
-  onFileSelected(): void {
-    this.electronService.selectFile().then((file : string)=>{
-      console.log(file);
-      
-    });
+  removeFile(): void {
+    this.isFileSelected = false;
+    this.fileInfos = new FileInfos();
+    this.buttonDefaultText = 'UpLoad';
   }
 }
 /*
