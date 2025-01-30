@@ -1,6 +1,8 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron"); 
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
-
+const fs = require("fs");
+const { json } = require("stream/consumers");
+const { parseArgs } = require("util");
 let win;
 
 function createWindow() {
@@ -9,7 +11,7 @@ function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: false,
-      preload: path.join(__dirname,"preload.js"),
+      preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
     },
   });
@@ -36,6 +38,8 @@ function createWindow() {
     win = null;
   });
 }
+
+// * lenna events handling li jeyin from the renderer process AKA front
 ipcMain.handle("open-file-dialog", async () => {
   const result = await dialog.showOpenDialog({
     title: "Select a PDF File",
@@ -49,7 +53,25 @@ ipcMain.handle("open-file-dialog", async () => {
 
   return ""; // Return empty if no file selected
 });
-
+ipcMain.handle("get-file-info", async (event, filePath) => {
+  try {
+    const filestats = await fs.promises.stat(filePath);
+    // console.log("this is for test ", fileInfo);
+    const filename = path.basename(filePath);
+    const fileext = path.extname(filePath);
+    const fileInfos = {
+      Name: filename,
+      Size: filestats.size,
+      CreatedAt: filestats.birthtime,
+      Extension: fileext,
+      Path: filePath,
+    };
+    return fileInfos;
+  } catch (error) {
+    console.error("Error reading file info:", error);
+    throw error; // Propagate the error to the renderer
+  }
+});
 
 app.on("ready", createWindow);
 
@@ -60,3 +82,4 @@ app.on("window-all-closed", () => {
 app.on("activate", () => {
   if (win === null) createWindow();
 });
+// todo create a custom pipe to deal with file size display
